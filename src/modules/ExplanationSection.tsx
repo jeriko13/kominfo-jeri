@@ -76,7 +76,7 @@ export const ExplanationSection = () => {
 
       <p className='mt-4 max-w-prose'>
         Ingin berkontribusi?{' '}
-        <Link href='https://github.com/angeloanan/kominfo-d-' passHref>
+        <Link href='https://github.com/jeriko13/kominfo-jeri' passHref>
           <a className='text-blue-800 underline'>Kunjungi repositori kodenya di Github!</a>
         </Link>
       </p>
