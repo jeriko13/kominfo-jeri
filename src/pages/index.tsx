@@ -1,0 +1,164 @@
+import { GetStaticPropsContext, GetStaticPropsResult } from 'next'
+import Link from 'next/link.js'
+import { NextSeo } from 'next-seo'
+import * as React from 'react'
+
+import FullPSEData from '../../public/data.json'
+import { devStarterPack, idnStarterPack, linuxStarterPack, websiteListUSA } from '../_data/websites'
+import { WebsiteEntry } from '../components/WebsiteEntry'
+import { ExplanationSection, ManualSearchSection, WhatIsThisSection } from '../modules'
+import type { PSEData } from '../types/PSEData'
+import { generateBlockList } from './api/fetchBlocked'
+
+const isWebsiteRegistered = (websiteData: PSEData[], findUrl: string) => {
+  return websiteData.some((entry) =>
+    // Return true if the url is found in the list of registered websites
+    entry.attributes.website.toLowerCase().startsWith('http')
+      ? // Handles URL starts with http, removing protocol
+        entry.attributes.website
+          .toLowerCase()
+          .replace(/(https?:\/\/)/, '')
+          .startsWith(findUrl)
+      : // Directly searches for entry
+        entry.attributes.website.toLowerCase().startsWith(findUrl)
+  )
+}
+
+const allWebsitesCombined = [
+  devStarterPack,
+  idnStarterPack,
+  linuxStarterPack,
+  websiteListUSA
+].flat()
+
+interface IndexPageProps {
+  PSEData: Record<string, boolean>
+  blockData: Record<string, boolean>
+}
+
+export async function getStaticProps(
+  ctx: GetStaticPropsContext
+): Promise<GetStaticPropsResult<IndexPageProps>> {
+  const sites: Record<string, boolean> = {}
+
+  allWebsitesCombined.forEach((w) => {
+    sites[w.website] = isWebsiteRegistered(FullPSEData as PSEData[], w.website)
+  })
+
+  const blockData = await generateBlockList()
+
+  return {
+    props: { PSEData: sites, blockData },
+    revalidate: 5 * 60
+  }
+}
+
+const IndexPage = ({ PSEData: data, blockData }: IndexPageProps) => {
+  return (
+    <>
+      <NextSeo />
+
+      <div className='flex w-full justify-center'>
+        <div className='w-full max-w-screen-xl p-8'>
+          <header className='flex w-full flex-col items-center'>
+            <h1 className='text-5xl font-bold italic'>Kominfo&apos;d?</h1>
+            <span>Website ini bakal keblokir ga ya?</span>
+          </header>
+
+          <WhatIsThisSection />
+
+          <ExplanationSection />
+
+          <section className='mt-8'>
+            <h2 className='text-2xl font-semibold'>Indonesia Starterpack</h2>
+            <p>Situs atau service ini terpopuler dengan orang Indonesia</p>
+            <ul className='mt-4 grid grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+              {idnStarterPack.map((website) => (
+                <WebsiteEntry
+                  website={website.icon}
+                  key={website.icon.title}
+                  blocked={blockData?.[website.website] ?? false}
+                  registered={data[website.website]}
+                />
+              ))}
+            </ul>
+          </section>
+
+          <section className='mt-8'>
+            <h2 className='text-2xl font-semibold'>Essential developer toolkit</h2>
+            <p>Service yang ✨ anak bangsa ✨ mungkin akan pakai saat membuat app</p>
+
+            <ul className='mt-4 grid grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+              {devStarterPack.map((website) => (
+                <WebsiteEntry
+                  website={website.icon}
+                  key={website.icon.title}
+                  blocked={blockData?.[website.website] ?? false}
+                  registered={data[website.website]}
+                />
+              ))}
+            </ul>
+          </section>
+
+          <section className='mt-8'>
+            <h2 className='text-2xl font-semibold'>Top websites USA</h2>
+            <p>
+              2022 Top websites in the USA. Sumber data website diambil dari{' '}
+              <a
+                href='https://www.semrush.com/blog/most-visited-websites/'
+                className='text-blue-700 underline'
+                target='_blank'
+                rel='noreferrer'
+              >
+                semrush.com
+              </a>
+            </p>
+            <p>
+              <em>Catatan: Ada beberapa website ditiadakan karena tidak berhubungan</em>
+            </p>
+            <ul className='mt-4 grid grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+              {websiteListUSA.map((website) => (
+                <WebsiteEntry
+                  website={website.icon}
+                  key={website.icon.title}
+                  blocked={blockData?.[website.website] ?? false}
+                  registered={data[website.website]}
+                />
+              ))}
+            </ul>
+          </section>
+
+          <section className='mt-8'>
+            <h2 className='text-2xl font-semibold'>Linux Starterpack</h2>
+            <p>Service yang sering dipakai Linux user 🐧</p>
+
+            <div className='mt-4 grid grid-flow-row grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
+              {linuxStarterPack.map((website) => (
+                <WebsiteEntry
+                  website={website.icon}
+                  key={website.icon.title}
+                  blocked={blockData?.[website.website] ?? false}
+                  registered={data[website.website]}
+                />
+              ))}
+            </div>
+          </section>
+
+          <ManualSearchSection />
+
+          <footer className='mt-8 text-sm font-light'>
+            <Link href='https://jeriko13.w3spaces.com' passHref>
+              <a>
+                <div>Created with 🤨, 😠 and 😡 by Jeriko!</div>
+                <div>Found any mistakes? Don&apos;t hesitate to contact me</div>
+                <div className='mt-2'>https://jeriko13.w3spaces.com | @Jeriko</div>
+              </a>
+            </Link>
+          </footer>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default IndexPage
