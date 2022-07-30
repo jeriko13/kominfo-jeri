@@ -9,7 +9,7 @@ import {
 import type { IndiWTFResponse } from '../../types/IndiWTFResponse'
 
 const USER_AGENT =
-  'Mozilla/5.0 (compatible; Kominfod/1.0; +https://github.com/jeriko13/kominfo)'
+  'Mozilla/5.0 (compatible; Kominfod/1.0; +https://github.com/jeriko13/kominfo-jeri)'
 
 const fetchIndiWtfStatus = async (url: string): Promise<boolean> => {
   try {

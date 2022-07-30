@@ -13,7 +13,7 @@ export const ExplanationSection = () => {
         dan mencocokan url services dengan link yang ada di database kami. Data situs ini akan
         secara otomatis diperbaharui setiap 1 jam (
         <Link
-          href='https://github.com/angeloanan/kominfo-d-/actions/workflows/refresh-data.yml'
+          href='https://github.com/jeriko13/kominfo-jeri/actions/workflows/refresh-data.yml'
           passHref
         >
           <a className='text-blue-800 underline'>lihat status updatenya disini</a>
