@@ -2,6 +2,6 @@
 
 Website ini kena blokir kominfo ga ya...
 
-http://kominfo-d.vercel.app/# kominfo
+http://kominfo-jeri.vercel.app/# kominfo
 # kominfo
 # kominfo-jeri
